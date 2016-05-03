@@ -155,7 +155,7 @@ rxGetInfo(weather, numRows = 10, getVarInfo = TRUE)
 rxSummary(formula = ~., data = weather)
 
 
-### Step 2: Data Manipulation
+### Step 2: Process Data
 
 # In order to merge the flight and weather data, we need to 
 # rename some column names in the weather to be the same

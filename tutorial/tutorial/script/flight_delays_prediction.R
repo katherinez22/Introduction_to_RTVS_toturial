@@ -48,6 +48,11 @@ outFileOrigin <- paste0(td, "/originData.xdf")
 outFileDest <- paste0(td, "/destData.xdf")
 outFileFinal <- paste0(td, "/finalData.xdf")
 
+# Change compute context to local parallel computing
+rxSetComputeContext("localpar")
+# You can also try the default local sequential computing on your own. 
+#rxSetComputeContext("local")
+
 
 ### Step 1: Exlore and Import Data
 
@@ -90,20 +95,20 @@ flight <- rxFactors(inData = flightView2, outFile = outFileFlight,
 # Using this option if you are familar with the dataset and 
 # know what data preparation needs to do.
 # This way of import the data set is more efficient. 
-# flight <- rxImport(inData = inputFileFlight, outFile = outFileFlight,
-#                    missingValueString = "M", stringsAsFactors = FALSE,
-#                    # Remove unuseful columns and columns that are possible target leakers.
-#                    varsToDrop = c("Year", 
-#                                   "DepDelay", 
-#                                   "DepDel15", 
-#                                   "CRSArrTime", 
-#                                   "ArrDelay", 
-#                                   "Cancelled"),
-#                    # Define "Carrier" as categorical.
-#                    colInfo = list(Carrier = list(type = "factor")),
-#                    # Round down scheduled departure time to full hour.
-#                    transforms = list(CRSDepTime = floor(CRSDepTime / 100)),
-#                    overwrite = TRUE)
+#flight <- rxImport(inData = inputFileFlight, outFile = outFileFlight,
+                #missingValueString = "M", stringsAsFactors = FALSE,
+                ## Remove unuseful columns and columns that are possible target leakers.
+                #varsToDrop = c("Year", 
+                                #"DepDelay", 
+                                #"DepDel15", 
+                                #"CRSArrTime", 
+                                #"ArrDelay", 
+                                #"Cancelled"),
+                ## Define "Carrier" as categorical.
+                #colInfo = list(Carrier = list(type = "factor")),
+                ## Round down scheduled departure time to full hour.
+                #transforms = list(CRSDepTime = floor(CRSDepTime / 100)),
+                #overwrite = TRUE)
 
 # Let's quickly check the pre-processing of flight data is done correctly.
 rxGetVarInfo(flight)  
@@ -253,7 +258,7 @@ rxPredict(logitModel, data = test,
           type = "response",
           predVarNames = "ArrDel15_Pred_Logit",
           overwrite = TRUE)
-
+          
 # Let's take a look of the predicted probabilities. 
 head(test)
 
@@ -308,9 +313,10 @@ dTree2 <- prune.rxDTree(dTree1, cp = treeCp)
 # Note: if you don't have a zip program installed on your machine,
 # the following command may not work.
 library("RevoTreeView")
-zipTreeView(createTreeView(dTree2), "myDecisionTree.zip", 
-            flags="a", 
-            zip="C:/Program Files/7-Zip/7z.exe")
+zipTreeView(createTreeView(dTree2), 
+            "myDecisionTree.zip", 
+            flags = "a", 
+            zip = "C:/Program Files/7-Zip/7z.exe") 
 
 # Now, let's switch to the folder and unzip the file.
 # once the .zip file is unzipped, double click on the .html file 

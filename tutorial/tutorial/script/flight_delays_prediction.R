@@ -86,7 +86,8 @@ flightView2 <- rxDataStep(inData = flightView, outFile = outFileFlightView2,
 
 # Also, "Carrier" can be treated as a categorical feature.
 # "rxFactors()" will help us convert non-factor feature into a factor.
-flight <- rxFactors(inData = flightView2, outFile = outFileFlight, 
+flight <- rxFactors(inData = flightView2,
+                    outFile = outFileFlight, 
                     sortLevels = TRUE,
                     factorInfo = "Carrier",
                     overwrite = TRUE)
@@ -96,19 +97,19 @@ flight <- rxFactors(inData = flightView2, outFile = outFileFlight,
 # know what data preparation needs to do.
 # This way of import the data set is more efficient. 
 #flight <- rxImport(inData = inputFileFlight, outFile = outFileFlight,
-                #missingValueString = "M", stringsAsFactors = FALSE,
-                ## Remove unuseful columns and columns that are possible target leakers.
-                #varsToDrop = c("Year", 
-                                #"DepDelay", 
-                                #"DepDel15", 
-                                #"CRSArrTime", 
-                                #"ArrDelay", 
-                                #"Cancelled"),
-                ## Define "Carrier" as categorical.
-                #colInfo = list(Carrier = list(type = "factor")),
-                ## Round down scheduled departure time to full hour.
-                #transforms = list(CRSDepTime = floor(CRSDepTime / 100)),
-                #overwrite = TRUE)
+                    #missingValueString = "M", stringsAsFactors = FALSE,
+                    ## Remove unuseful columns and columns that are possible target leakers.
+                    #varsToDrop = c("Year", 
+                                   #"DepDelay", 
+                                   #"DepDel15", 
+                                   #"CRSArrTime", 
+                                   #"ArrDelay", 
+                                   #"Cancelled"),
+                    ## Define "Carrier" as categorical.
+                    #colInfo = list(Carrier = list(type = "factor")),
+                    ## Round down scheduled departure time to full hour.
+                    #transforms = list(CRSDepTime = floor(CRSDepTime / 100)),
+                    #overwrite = TRUE)
 
 # Let's quickly check the pre-processing of flight data is done correctly.
 rxGetVarInfo(flight)  
@@ -258,7 +259,7 @@ rxPredict(logitModel, data = test,
           type = "response",
           predVarNames = "ArrDel15_Pred_Logit",
           overwrite = TRUE)
-          
+
 # Let's take a look of the predicted probabilities. 
 head(test)
 
@@ -290,13 +291,13 @@ dTree1 <- rxDTree(modelFormula, data = train, reportProgress = 2)
 
 # If "rpart" library is installed, we can plot the Error vs. cp
 # as a guide to pruning.
+# "cp" is a complexity parameter that specifies how the cost of a tree
+# is penalized by the numer of terminal nodes.
 (if (!require("rpart", quietly = TRUE)) install.packages("rpart"))
 plotcp(rxAddInheritance(dTree1))
 
 # To further pruning the trees, we want to find the best value of "cp".
-# "cp" is a complexity parameter that specifies how the cost of a tree
-# is penalized by the numer of terminal nodes.
-# In another words, small "cp" results in larger trees and potential 
+# Usually, a small "cp" results in larger trees and potential 
 # overfitting, large "cp" results in small trees and potential 
 # underfitting. So we want to find the best "cp" value.
 treeCp <- rxDTreeBestCp(dTree1)
@@ -308,7 +309,7 @@ dTree2 <- prune.rxDTree(dTree1, cp = treeCp)
 
 # Want to see an interactive decission tree in your browser?
 # Let's do it!
-# First, we need to use zip the current tree to a .zip file
+# First, we need to zip the current tree to a .zip file
 # by using the "RevoTreeView" library.
 # Note: if you don't have a zip program installed on your machine,
 # the following command may not work.

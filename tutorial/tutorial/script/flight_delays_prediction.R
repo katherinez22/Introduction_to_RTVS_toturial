@@ -48,7 +48,7 @@ outFileOrigin <- paste0(td, "/originData.xdf")
 outFileDest <- paste0(td, "/destData.xdf")
 outFileFinal <- paste0(td, "/finalData.xdf")
 
-# Change compute context to local parallel computing
+# Change compute context to local parallel computing.
 rxSetComputeContext("localpar")
 # You can also try the default local sequential computing on your own. 
 #rxSetComputeContext("local")
@@ -58,8 +58,10 @@ rxSetComputeContext("localpar")
 
 # Import the flight data from a .csv file and store it as .xdf.
 flightView <- rxImport(inData = inputFileFlight,
-                       outFile = outFileFlightView, overwrite = TRUE,
-                       missingValueString = "M", stringsAsFactors = FALSE)
+                       outFile = outFileFlightView, 
+                       missingValueString = "M",
+                       stringsAsFactors = FALSE,
+                       overwrite = TRUE)
 
 # Explore the flight data. 
 rxGetInfo(flightView, numRows = 10, getVarInfo = TRUE)
@@ -85,7 +87,7 @@ flightView2 <- rxDataStep(inData = flightView, outFile = outFileFlightView2,
                           overwrite = TRUE)
 
 # Also, "Carrier" can be treated as a categorical feature.
-# "rxFactors()" will help us convert non-factor feature into a factor.
+# "rxFactors()" will help us convert an non-factor feature into a factor.
 flight <- rxFactors(inData = flightView2,
                     outFile = outFileFlight, 
                     sortLevels = TRUE,

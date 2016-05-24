@@ -61,6 +61,7 @@ flightView <- rxImport(inData = inputFileFlight,
                        outFile = outFileFlightView, 
                        missingValueString = "M",
                        stringsAsFactors = FALSE,
+                       rowsPerRead = 100000,
                        overwrite = TRUE)
 
 # Explore the flight data. 
@@ -111,6 +112,7 @@ flight <- rxFactors(inData = flightView2,
                     #colInfo = list(Carrier = list(type = "factor")),
                     ## Round down scheduled departure time to full hour.
                     #transforms = list(CRSDepTime = floor(CRSDepTime / 100)),
+                    #rowsPerRead = 100000,
                     #overwrite = TRUE)
 
 # Let's quickly check the pre-processing of flight data is done correctly.
@@ -149,6 +151,7 @@ weather <- rxImport(inData = inputFileWeather, outFile = outFileWeather,
                                       "RelativeHumidity",
                                       "WindSpeed",
                                       "Altimeter"),
+                    rowsPerRead = 50000,
                     overwrite = TRUE)
 
 # Review the feature information of weather data.
@@ -220,6 +223,7 @@ rxFactors(inData = destData, outFile = outFileFinal, sortLevels = TRUE,
 # Randomly split 80% data as training set and the remaining 20% as test set.
 # To randomly split the data, we need to define a split variable.
 # "splitVar" carries two values "Train" and "Test".
+set.seed(123)
 rxSplit(inData = outFileFinal,
         outFilesBase = paste0(td, "/modelData"),
         outFileSuffixes = c("Train", "Test"),
@@ -230,7 +234,6 @@ rxSplit(inData = outFileFinal,
                                                    replace = TRUE,
                                                    prob = c(.80, .20)),
                                             levels = c("Train", "Test"))),
-        rngSeed = 17,
         consoleOutput = TRUE)
 
 # Point the output .xdf files to the training and test set.
